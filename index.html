@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Set up audio and visual reminders, installable as a desktop or mobile app." />
+  <meta name="theme-color" content="#e94560" />
+  <title>Reminder App</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────── -->
+<header>
+  <h1><span class="bell" aria-hidden="true">🔔</span> Reminder App</h1>
+  <div style="display:flex;gap:.6rem;align-items:center;">
+    <button id="audio-toggle" title="Toggle sound" aria-pressed="true">
+      <span class="audio-icon">🔊</span> Sound On
+    </button>
+    <button id="install-btn" aria-label="Install app">
+      ⬇️ Install App
+    </button>
+  </div>
+</header>
+
+<!-- ── Main ──────────────────────────────────────────────────── -->
+<main>
+
+  <!-- Notification permission banner -->
+  <div id="notif-banner" role="alert" aria-live="polite">
+    <p><strong>Enable Notifications</strong> to receive visual alerts even when the browser tab is in the background.</p>
+    <button class="btn btn-primary" id="notif-allow-btn">Allow Notifications</button>
+  </div>
+
+  <!-- Add / Edit Reminder form -->
+  <section class="card" aria-labelledby="form-heading">
+    <h2 id="form-heading">➕ Add Reminder</h2>
+    <form id="reminder-form" novalidate>
+      <input type="hidden" id="edit-id" value="" />
+
+      <div class="form-row">
+        <div>
+          <label for="title">Title *</label>
+          <input type="text" id="title" placeholder="e.g. Take medication" maxlength="80" required />
+        </div>
+        <div>
+          <label for="datetime">Date &amp; Time *</label>
+          <input type="datetime-local" id="datetime" required />
+        </div>
+      </div>
+
+      <div>
+        <label for="notes">Notes (optional)</label>
+        <textarea id="notes" placeholder="Extra details…" maxlength="500"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label for="repeat">Repeat</label>
+          <select id="repeat">
+            <option value="none">No repeat</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+          </select>
+        </div>
+        <div>
+          <label for="snooze-min">Snooze duration</label>
+          <select id="snooze-min">
+            <option value="5">5 minutes</option>
+            <option value="10">10 minutes</option>
+            <option value="15" selected>15 minutes</option>
+            <option value="30">30 minutes</option>
+            <option value="60">1 hour</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" id="submit-btn">💾 Save Reminder</button>
+        <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="display:none;">✖ Cancel</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Reminders list -->
+  <section class="card" aria-labelledby="list-heading">
+    <h2 id="list-heading">📋 My Reminders</h2>
+
+    <div class="stats" id="stats-row" aria-live="polite"></div>
+
+    <div class="list-controls" style="margin-top:.85rem;">
+      <input type="search" id="search-input" placeholder="🔍 Search reminders…" aria-label="Search reminders" />
+      <select id="filter-select" aria-label="Filter by status">
+        <option value="all">All</option>
+        <option value="pending">Pending</option>
+        <option value="done">Done</option>
+        <option value="missed">Missed</option>
+        <option value="snoozed">Snoozed</option>
+      </select>
+      <button class="btn btn-danger" id="clear-done-btn" title="Delete all completed reminders">🗑 Clear Done</button>
+    </div>
+
+    <div id="reminders-list" aria-live="polite" aria-label="Reminders list"></div>
+  </section>
+
+</main>
+
+<!-- ── Firing Alert Overlay ───────────────────────────────── -->
+<div id="alert-overlay" role="dialog" aria-modal="true" aria-labelledby="alert-title">
+  <div class="alert-box">
+    <div class="alert-icon" aria-hidden="true">🔔</div>
+    <h2 id="alert-title">Reminder!</h2>
+    <p id="alert-body"></p>
+    <div class="alert-actions">
+      <button class="btn btn-secondary" id="snooze-alert-btn">😴 Snooze</button>
+      <button class="btn btn-primary"   id="dismiss-alert-btn">✅ Dismiss</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast container ────────────────────────────────────── -->
+<div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
